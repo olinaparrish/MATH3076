@@ -1,0 +1,48 @@
+class RK4():
+    
+    def __init__(self,start,forcing,time=0):
+        self.time = [time]
+        self.data = [start]
+        self.RHS  = forcing
+        
+    def __call__(self,dt):
+        
+        self.time += [ self.time[-1] + dt ]
+        
+        x = self.data[-1]
+        f = self.RHS
+        
+        i1 = (dt/2)*f(x)
+        i2 = (dt/2)*f(x+i1)
+        i3 =   (dt)*f(x+i2)
+        i4 = (dt/2)*f(x+i3)
+        
+        self.data += [ x + (1/3)*( i1 + 2*i2 + i3 + i4 ) ]
+    
+    def state(self):
+        return np.array(self.time), np.array(self.data).T       
+    
+    def now(self):
+        return self.time[-1]
+
+class Lorenz():
+    
+    def __init__(self,s,r,b):
+        self.s    = s
+        self.r    = r
+        self.b    = b
+        
+    def __call__(self,x):
+        
+        s    = self.s
+        r    = self.r
+        b    = self.b
+        
+        f0 =  s*(x[1]-x[0])
+        f1 =  x[0]*(r-x[2]) - x[1]
+        f2 =  x[0]*x[1] - b*x[2]
+        
+        return np.array( [ f0, f1, f2 ] )
+
+while LNZ_RK4.now() < 20:
+    LNZ_RK4(0.1*dt)
